@@ -4,15 +4,17 @@
  Author      : Kayel Serafim
  Version     :
  Copyright   :
- Description : The sequential version to measure the total time
+ Description : The sequential version of QS to measure the total time
  ============================================================================
  */
 #include<stdio.h>
 #include<stdlib.h>
 #include<time.h>
 
-#define DEBUG 1            // comentar esta linha quando for medir tempo
-#define ARRAY_SIZE 40      // trabalho final com o valores 10.000, 100.000, 1.000.000
+// 0 para desabilitar os prints e 1 para habilitar
+#define DEBUG 0
+// trabalho final com o valores 10.000, 100.000, 1.000.000
+#define ARRAY_SIZE 1000000
 
 /*
  * Comparison function.
@@ -49,7 +51,7 @@ int main() {
 	populate(ARRAY_SIZE, vetor);
 	printf("\nVetor populado.");
 
-#ifdef DEBUG
+#if DEBUG
 	printf("\nVetor desordenado:");
 	print(ARRAY_SIZE, vetor);
 #endif
@@ -58,7 +60,7 @@ int main() {
 	qsort(vetor, ARRAY_SIZE, sizeof(int), compare);
 	printf("\nVetor ordenado.");
 
-#ifdef DEBUG
+#if DEBUG
 	printf("\nVetor ordenado:");
 	print(ARRAY_SIZE, vetor);
 #endif

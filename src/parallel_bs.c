@@ -7,12 +7,16 @@
  Description : Parallel version of BS following the division and conquest model
  ============================================================================
  */
-#include<stdio.h>
-#include<stdlib.h>
-#include<time.h>
+#include <mpi.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-#define DEBUG 1            // comentar esta linha quando for medir tempo
-#define ARRAY_SIZE 40      // trabalho final com o valores 10.000, 100.000, 1.000.000
+#define DIVIDE_CONQUER_TAG 0
+
+// 0 para desabilitar os prints e 1 para habilitar
+#define DEBUG 1
+// trabalho final com o valores 10.000, 100.000, 1.000.000
+#define ARRAY_SIZE 80
 
 /*
  * Buble sort algorithm.
@@ -70,12 +74,95 @@ void populate(int n, int *vector) {
  */
 void print(int n, int *vector) {
 	int i;
-	for (i = 0; i < n; i++) {
-		printf("%d ", vector[i]);
-	}
+	printf("[");
+	for (i = 0; i < n; i++)
+		printf(" %d ", vector[i]);
+	printf("]\n");
 }
 
-int main() {
+int main(int argc, char **argv) {
+	int proc_n;
+	int my_rank;
+	int tam_vetor;
+	// Tempo inicial e final
+	double t0, t1;
+	MPI_Status status;
 
+	// função que inicializa o MPI
+	MPI_Init(&argc, &argv);
+	MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+	MPI_Comm_size(MPI_COMM_WORLD, &proc_n);
 
+	int vector[ARRAY_SIZE];
+	int *interleaving_vetor;
+	t0 = MPI_Wtime();
+
+	if (my_rank != 0) {
+		// não sou a raiz, tenho pai
+		MPI_Recv(&vector, ARRAY_SIZE, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+		// descubro tamanho da mensagem recebida
+		MPI_Get_count(&status, MPI_INT, &tam_vetor);
+	} else {
+		// defino tamanho inicial do vetor
+		tam_vetor = ARRAY_SIZE;
+		// sou a raiz e portanto gero o vetor - ordem reversa
+		populate(tam_vetor, vector);
+	}
+	int delta = ARRAY_SIZE / ((proc_n + 1) / 2);
+	int parent_leaf = (my_rank - 1) / 2;
+
+#if DEBUG
+	printf("Dividir ou conquistar? \n my_rank: %d, tam_vetor: %d e delta: %d \n", my_rank, tam_vetor, delta);
+#endif
+	// dividir ou conquistar?
+	if (tam_vetor <= delta) {
+		// conquisto
+		printf("conquer at rank %d, parent_leaf %d \n", my_rank, parent_leaf);
+
+		bs(tam_vetor, vector);
+		MPI_Send(vector, tam_vetor, MPI_INT, parent_leaf, status.MPI_TAG, MPI_COMM_WORLD);
+
+#if DEBUG
+		print(tam_vetor, vector);
+#endif
+	} else {
+		// dividir
+		// quebrar em duas partes e manda para os filhos
+		int size = tam_vetor / 2;
+		int left_leaf = 2 * my_rank + 1;
+		int right_leaf = 2 * my_rank + 2;
+
+		printf("divide at rank %d -> left: %d and right:%d \n", my_rank, left_leaf, right_leaf);
+
+		// mando metade inicial do vetor
+		MPI_Send(&vector[0], size, MPI_INT, left_leaf, DIVIDE_CONQUER_TAG, MPI_COMM_WORLD);
+		// mando metade final
+		MPI_Send(&vector[tam_vetor / 2], size, MPI_INT, right_leaf, DIVIDE_CONQUER_TAG, MPI_COMM_WORLD);
+
+		// receber dos filhos
+		MPI_Recv(&vector[0], size, MPI_INT, left_leaf, DIVIDE_CONQUER_TAG, MPI_COMM_WORLD, &status);
+		MPI_Recv(&vector[tam_vetor / 2], size, MPI_INT, right_leaf, DIVIDE_CONQUER_TAG, MPI_COMM_WORLD, &status);
+	}
+
+	// intercalo vetor inteiro
+	interleaving_vetor = interleaving(vector, tam_vetor);
+
+	// mando para o pai
+	if (my_rank != 0) {
+		// tenho pai, retorno vetor ordenado pra ele
+		MPI_Send(interleaving_vetor, tam_vetor, MPI_INT, parent_leaf, DIVIDE_CONQUER_TAG, MPI_COMM_WORLD);
+	} else {
+		// sou o raiz, mostro vetor
+		t1 = MPI_Wtime();
+		printf("Time %f\n", t1 - t0);
+#if DEBUG
+		printf("sou a raiz, mostro vetor \n");
+		print(tam_vetor, interleaving_vetor);
+#endif
+	}
+
+	free(interleaving_vetor);
+
+	MPI_Finalize();
+	return 0;
 }
