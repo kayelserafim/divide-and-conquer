@@ -19,22 +19,10 @@
 #define ARRAY_SIZE 1000000
 
 /*
- * Buble sort algorithm.
+ * Quick sort algorithm.
  */
-void bs(int n, int *vetor) {
-	int c = 0, d, troca, trocou = 1;
-
-	while ((c < (n - 1)) & trocou) {
-		trocou = 0;
-		for (d = 0; d < n - c - 1; d++)
-			if (vetor[d] > vetor[d + 1]) {
-				troca = vetor[d];
-				vetor[d] = vetor[d + 1];
-				vetor[d + 1] = troca;
-				trocou = 1;
-			}
-		c++;
-	}
+int compare(const void *a, const void *b) {
+	return (*(int*) a - *(int*) b);
 }
 
 /* Recebe um ponteiro para um vetor que contem as mensagens recebidas dos filhos e
@@ -119,7 +107,7 @@ int main(int argc, char **argv) {
 		// conquisto
 		printf("conquer at rank %d, parent_leaf %d \n", my_rank, parent_leaf);
 
-		bs(tam_vetor, vector);
+		qsort(vector, tam_vetor, sizeof(int), compare);
 		MPI_Send(vector, tam_vetor, MPI_INT, parent_leaf, status.MPI_TAG, MPI_COMM_WORLD);
 
 #if DEBUG

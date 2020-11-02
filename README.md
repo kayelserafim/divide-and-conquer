@@ -189,10 +189,10 @@ openmpi: /usr/lib/x86_64-linux-gnu/openmpi /etc/openmpi /usr/share/openmpi
 
 **Execução C em máquina local:** ./sequential.o
 
-**Compilação MPI em máquina local:** mpicc parallel_slave.c -o parallel_slave.o
+**Compilação MPI em máquina local:** mpicc parallel_slave.c -o parallel_bs.o
 
-**Execução MPI em máquina local:** mpirun --hostfile ../hostfile -np 4 ./parallel_slave.o
+**Execução MPI em máquina local:** mpirun --hostfile ./hostfile -np 4 ./parallel_bs.o
 
-**Execução no lad:** ladrun -np 16 /parallel_slave.o
+**Execução no lad:** ladrun -np 16 /parallel_bs.o
 
-**Execução no lad:** ladrun -np 32 /parallel_slave.o
+**Execução no lad:** ladrun -np 32 /parallel_bs.o
