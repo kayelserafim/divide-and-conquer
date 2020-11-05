@@ -4,7 +4,7 @@
  Author      : Kayel Serafim
  Version     :
  Copyright   :
- Description : Parallel version of BS following the division and conquest model
+ Description : Parallel version of QS following the Divide and Conquer model
  ============================================================================
  */
 #include <mpi.h>
@@ -16,7 +16,7 @@
 // 0 para desabilitar os prints e 1 para habilitar
 #define DEBUG 0
 // trabalho final com o valores 10.000, 100.000, 1.000.000
-#define ARRAY_SIZE 1000000
+#define ARRAY_SIZE 50000000
 
 /*
  * Quick sort algorithm.
