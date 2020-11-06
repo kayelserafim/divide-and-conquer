@@ -14,7 +14,7 @@
 // 0 para desabilitar os prints e 1 para habilitar
 #define DEBUG 0
 // trabalho final com o valores 10.000, 100.000, 1.000.000
-#define ARRAY_SIZE 1000000
+#define ARRAY_SIZE 2000000
 
 /*
  * Quick sort algorithm.

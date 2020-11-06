@@ -1,6 +1,6 @@
 /*
  ============================================================================
- Name        : parallel_bs.c
+ Name        : parallel_qs.c
  Author      : Kayel Serafim
  Version     :
  Copyright   :
