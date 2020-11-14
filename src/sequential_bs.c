@@ -56,25 +56,25 @@ void print(int n, int *vector) {
 }
 
 int main() {
-	int vetor[ARRAY_SIZE];
+	int vector[ARRAY_SIZE];
 	clock_t begin = clock();
 
 	printf("Populando o vetor com inteiros no pior caso...");
-	populate(ARRAY_SIZE, vetor);
+	populate(ARRAY_SIZE, vector);
 	printf("\nVetor populado.");
 
 #if DEBUG
 	printf("\nVetor desordenado:");
-	print(ARRAY_SIZE, vetor);
+	print(ARRAY_SIZE, vector);
 #endif
 
 	printf("\nOrdenando vetores...");
-	bs(ARRAY_SIZE, vetor);
+	bs(ARRAY_SIZE, vector);
 	printf("\nVetor ordenado.");
 
 #if DEBUG
 	printf("\nVetor ordenado:");
-	print(ARRAY_SIZE, vetor);
+	print(ARRAY_SIZE, vector);
 #endif
 
 	clock_t end = clock();
