@@ -95,7 +95,6 @@ int main(int argc, char **argv) {
 
 	int vector[ARRAY_SIZE];
 	int *interleaving_vetor;
-	t0 = MPI_Wtime();
 
 	if (my_rank != 0) {
 		// não sou a raiz, tenho pai
@@ -103,6 +102,7 @@ int main(int argc, char **argv) {
 		// descubro tamanho da mensagem recebida
 		MPI_Get_count(&status, MPI_INT, &tam_vetor);
 	} else {
+		t0 = MPI_Wtime();
 		// defino tamanho inicial do vetor
 		tam_vetor = ARRAY_SIZE;
 		// sou a raiz e portanto gero o vetor - ordem reversa

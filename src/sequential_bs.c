@@ -17,7 +17,7 @@
 #define ARRAY_SIZE 1000000
 
 /*
- * Buble sort algorithm.
+ * Bubble sort algorithm.
  */
 void bs(int n, int *vetor) {
 	int c = 0, d, troca, trocou = 1;
